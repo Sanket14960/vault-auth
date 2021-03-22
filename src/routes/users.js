@@ -13,10 +13,12 @@ router.post('/', (req,res) => {
 
   User.findOne({ username })
     .then(user => {
-      if(user) return res.status(400).json({error : "Username exists"});
+      if(user) return res.status(400).json({error : "Username already exists"});
+      else {
+        const addUser = new User(req.body)
+        addUser.save((err) => err ? res.json(err): res.json(addUser))
+      }
 
-      const addUser = new User(req.body)
-      addUser.save((err) => err ? res.json(err): res.json(addUser))
     });
 });
 

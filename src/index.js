@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-const authorization = require('./middleware/authentication');
+const authentication = require('./middleware/authentication');
 
 const app = express()
 
@@ -18,7 +18,7 @@ mongoose.connect(db, {useNewUrlParser: true, useUnifiedTopology: true, useCreate
   .catch(err => console.log("Database failed to connect."));
 
 // Use Routes
-app.use('/users', require('./routes/users'))
+app.use('/users', authentication(), require('./routes/users'))
 
 
 const port = process.env.PORT || 3001;
