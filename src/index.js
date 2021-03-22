@@ -1,11 +1,26 @@
-const express = require('express')
+const express = require('express');
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+const authorization = require('./middleware/authentication');
+
 const app = express()
-const port = 3000
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
+app.use(express.json());
 
-app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`)
-})
+dotenv.config();
+
+// DB Config
+const db = require('./config/keys').mongoURI;
+
+// Connect to Mongo
+mongoose.connect(db, {useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true})
+  .then(() => console.log('MongoDB Connected'))
+  .catch(err => console.log("Database failed to connect."));
+
+// Use Routes
+app.use('/users', require('./routes/users'))
+
+
+const port = process.env.PORT || 3001;
+
+app.listen(port, () => console.log(`Server listening at http://localhost:${port}`));
