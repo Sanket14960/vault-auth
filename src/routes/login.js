@@ -1,16 +1,27 @@
 const express = require('express');
 const router = express.Router();
-const jwt = require("jsonwebtoken");
+const bcrypt = require('bcrypt')
+
 
 const User = require('../models/user')
 
 router.post('/', (req,res) => {
-  User.findOne({username: req.body.username}, function(err, user) {
-    if (err) throw err;
-    if (!user || !user.comparePassword(req.body.password)) {
-      return res.status(401).json({ message: 'Authentication failed. Invalid user or password.' });
-    }
-    return res.json({ token: jwt.sign({ username: user.username }, 'secret') });
-  });
+  const { username, password } = req.body;
+  
+  User.findOne({ username })
+    .then(user => {
+      
+      bcrypt.compare(password, user.password)
+        .then(isMatch => {
+          if(!isMatch) return res.status(400).json({ msg: 'invalid creds' })
+
+          res.json({
+            id : user.id,
+            username: user.username,
+            password: user.password
+          })
+        })
+    })
 });
 
+module.exports = router; 
