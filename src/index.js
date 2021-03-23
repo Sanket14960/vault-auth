@@ -18,8 +18,8 @@ mongoose.connect(db, {useNewUrlParser: true, useUnifiedTopology: true, useCreate
   .catch(err => console.log("Database failed to connect."));
 
 // Use Routes
-app.use('/users', authentication(), require('./routes/users'))
-
+app.use('/register', require('./routes/register'))
+app.use('/login', require('./routes/login'))
 
 const port = process.env.PORT || 3001;
 

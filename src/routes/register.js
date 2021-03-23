@@ -3,7 +3,7 @@ const router = express.Router();
 
 const User = require('../models/user')
 
-// Creates account if one does not already exist 
+// Creates account if one with ssame username does not already exist 
 router.post('/', (req,res) => {
   const { username, password } = req.body;
 
@@ -18,7 +18,6 @@ router.post('/', (req,res) => {
         const addUser = new User(req.body)
         addUser.save((err) => err ? res.json(err): res.json(addUser))
       }
-
     });
 });
 
