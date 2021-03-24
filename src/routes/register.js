@@ -4,12 +4,12 @@ const bcrypt = require('bcrypt')
 
 const User = require('../models/user')
 
-// Creates account if one with ssame username does not already exist 
+// Creates account if one with same username does not already exist 
 router.post('/', (req,res) => {
   const { username, password } = req.body;
 
   if(!username || !password) {
-    return res.status(400).json({error : 'Missing fields' });
+    return res.status(200).json({error : 'Missing fields' });
   }
 
   User.findOne({ username })

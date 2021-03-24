@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
 
 
 const User = require('../models/user')
@@ -14,12 +16,10 @@ router.post('/', (req,res) => {
       bcrypt.compare(password, user.password)
         .then(isMatch => {
           if(!isMatch) return res.status(400).json({ msg: 'invalid creds' })
-
-          res.json({
-            id : user.id,
-            username: user.username,
-            password: user.password
-          })
+          else {
+          const jwtToken = jwt.sign({id: user.id, username: user.username}, process.env.SECRET_KEY);         
+          res.json({message: 'Logged In!', token: jwtToken})
+          }
         })
     })
 });
