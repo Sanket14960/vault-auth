@@ -1,11 +1,19 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const cors = require('cors')
 const authentication = require('./middleware/authentication');
 
 const app = express()
 
+const corsOptions = {
+  origin:'http://localhost:3000',
+  optionsSuccessStatus: 200
+}
+app.use(cors(corsOptions))
+
 app.use(express.json());
+
 
 dotenv.config();
 
