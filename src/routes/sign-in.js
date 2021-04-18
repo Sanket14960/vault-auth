@@ -7,15 +7,15 @@ const User = require('../models/user')
 
 // Login and verify passowrd matches hashed password in DB
 router.post('/', (req,res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
   
-  User.findOne({ username })
+  User.findOne({ email })
     .then(user => {
       bcrypt.compare(password, user.password)
         .then(isMatch => {
           if(!isMatch) return res.status(400).json({ msg: 'invalid creds' })
           else {
-          const jwtToken = jwt.sign({id: user.id, username: user.username}, process.env.SECRET_KEY);         
+          const jwtToken = jwt.sign({id: user.id, email: user.email}, process.env.SECRET_KEY);         
           res.json({message: 'Logged In!', token: jwtToken})
           }
         })

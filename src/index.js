@@ -4,9 +4,7 @@ const dotenv = require('dotenv');
 const passport = require('passport');
 const cors = require('cors')
 
-require('./middleware/error-handler');
-require('./middleware/authentication');
-
+const errorHandler = require('./middleware/error-handler')
 
 const app = express()
 
@@ -23,15 +21,15 @@ dotenv.config();
 const db = require('./config/keys').mongoURI;
 
 // Connect to Mongo
-mongoose.connect(db, {useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true})
-  .then(() => console.log('MongoDB Connected'))
-  .catch(err => console.log("Database failed to connect."));
+
+const start = async () => {
+  await mongoose.connect(db, {useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true})
+}
 
 // Use Routes
-app.use('/register', require('./routes/register'))
-app.use('/login', passport.authenticate('jwt', { session: false }), require('./routes/login'))
-
 app.use(errorHandler);
+app.use('/sing-up', require('./routes/sign-up'))
+app.use('/sign-in', require('./routes/sign-in'))
 
 
 const port = process.env.PORT || 3001;
