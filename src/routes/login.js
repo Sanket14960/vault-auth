@@ -3,8 +3,6 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-
-
 const User = require('../models/user')
 
 // Login and verify passowrd matches hashed password in DB

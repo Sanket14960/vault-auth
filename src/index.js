@@ -1,8 +1,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const passport = require('passport');
 const cors = require('cors')
+
+require('./middleware/error-handler');
 require('./middleware/authentication');
+
 
 const app = express()
 
@@ -25,7 +29,9 @@ mongoose.connect(db, {useNewUrlParser: true, useUnifiedTopology: true, useCreate
 
 // Use Routes
 app.use('/register', require('./routes/register'))
-app.use('/login', require('./routes/login'))
+app.use('/login', passport.authenticate('jwt', { session: false }), require('./routes/login'))
+
+app.use(errorHandler);
 
 
 const port = process.env.PORT || 3001;
