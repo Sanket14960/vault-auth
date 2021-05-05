@@ -1,27 +1,20 @@
-const JwtStrategy = require('passport-jwt').Strategy;
-const ExtractJwt = require('passport-jwt').ExtractJwt;
-const passport = require('passport');
-const User = require('../models/user')
+const jwt = require('jsonwebtoken');
 
-function user_callback(payload, done) {
-  User.findOne({id: payload.sub}, function(err, user) {
-    if (err) {
-      return done(err, false);
-    }
-    if (user) {
-        return done(null, user);
-    } else {
-        return done(null, false);
-    }
-  });
-}
-
-module.exports = function (opt = { secret: process.env.SECRET_KEY }) {
-  const options = {
-    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: process.env.SECRET_KEY,
-    algorithms: ['RS256']
+module.exports = function (req, res, next) {
+  if (!req.get('Authorization')) {
+    next(new Error("No auth token found"));
   }
-  const strategy = new JwtStrategy(options, user_callback)
-  return passport.use(strategy);
+
+  const token = req.get('Authorization').split(' ')[1];
+  try {
+    const user_details = jwt.verify(token, process.env.SECRET_KEY)
+    console.log(user_details)
+    req.user_details = user_details;
+    next()
+  } catch(err) {
+    e = new Error("Invalid Token");
+    e.stack = err.stack;
+    console.log(err)
+    next(e);
+  }
 }

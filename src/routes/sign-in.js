@@ -6,20 +6,37 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user')
 
 // Login and verify passowrd matches hashed password in DB
-router.post('/', (req,res) => {
+router.post('/', async (req,res) => {
   const { email, password } = req.body;
-  
-  User.findOne({ email })
-    .then(user => {
-      bcrypt.compare(password, user.password)
-        .then(isMatch => {
-          if(!isMatch) return res.status(400).json({ msg: 'invalid creds' })
-          else {
-          const jwtToken = jwt.sign({id: user.id, email: user.email}, process.env.SECRET_KEY);         
-          res.json({message: 'Logged In!', token: jwtToken})
-          }
-        })
-    })
+
+  if(!password || !email) {
+    return res.status(400).json({error : "Fields can not be empty"});
+  }
+
+  const existingUser = await User.findOne({ email, password });
+
+  if(!existingUser) {
+    return res.status(400).json({error : "Invalid credentials provided"})
+  }
+
+  const checkPassword = bcrypt.compare(password, existingUser.password)
+
+  if(!checkPassword) {
+    return res.status(400).json({ msg: 'invalid creds' })
+  } else {
+    const jwtToken = jwt.sign({
+      id: existingUser?.id,
+      email: existingUser?.email
+    }, process.env.SECRET_KEY, {
+      expiresIn: '15m'
+    });
+    res.cookie("token", jwtToken, {
+      expires: new Date(Date.now() + 15 * 60 * 1000),
+      httpOnly: false,
+      secure: false
+    });
+    res.status(200).json({message: existingUser.email + " Has Logged in!", token: jwtToken})
+  }
 });
 
-module.exports = router; 
+module.exports = router;
