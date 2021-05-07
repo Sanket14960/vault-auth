@@ -12,7 +12,7 @@ router.post('/', (async (req, res) => {
     return res.status(400).json({error : "Fields can not be empty"});
   }
 
-  const existingUser = await Use.findOne({ email })
+  const existingUser = await User.findOne({ email })
 
   if(existingUser) {
     return res.status(400).json({error : "email already exists"});
@@ -32,7 +32,7 @@ router.post('/', (async (req, res) => {
     expiresIn: '15m'
   });
 
-   res.status(200).json({'User ID': addUser.id, message: "User Account Created!", token: jwtToken})
+   res.status(201).json({'User ID': addUser.id, message: "User Account Created!", token: jwtToken})
 }));
 
 
