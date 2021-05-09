@@ -4,7 +4,7 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const authentication = require('./middleware/authentication');
 
-const app = require('./app');
+// const app = require('./app');
 
 const app = express()
 // trust ingress nginx
